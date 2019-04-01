@@ -1,7 +1,10 @@
 package com.revature.eval.java.core;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,6 +250,7 @@ public class EvaluationService {
 		HashMap<String,Integer> count = new HashMap<String,Integer>();
 		string=string.toLowerCase();
 		string=string.replaceAll("[^a-z]"," ");
+		string=string+" ";
 		for(int i=0;i<string.length();i++) {
 			if (string.charAt(i)==' ') {
 				String sub=string.substring(0,i);
@@ -259,11 +263,6 @@ public class EvaluationService {
 				}else count.put(sub, 1);
 			}
 		}
-		if(count.containsKey(string)) {
-			int x=count.get(string);
-			x++;
-			count.replace(string, x);
-		}else count.put(string, 1);
 		return count;
 	}
 
@@ -303,49 +302,10 @@ public class EvaluationService {
 	 * 
 	 */
 	static class BinarySearch<T> {
-		private List<T> sortedList;
-
-		public void lessThan(int u, int x, T t) {
-			if(u<x) {
-				x=Math.round(x/2);
-				if(sortedList.get(x)==t&&x>0) {
-					
-			}else if(u<x) {
-				lessThan(u,x,t);
-			}else if(u>x) {
-				moreThan(u,x,t);
-			}
-		}}
-		
-		public void moreThan(int u, int x, T t) {
-			if(u>x) {
-				x=(int) Math.round(x*1.5);
-				if(sortedList.get(x)==t&&x<sortedList.size()) {
-					
-				}	else if(u<x) {
-					lessThan(u,x,t);
-				}else if(u>x) {
-					moreThan(u,x,t);
-				}
-			}}
-		
+		private List<T> sortedList;		
 		
 		public int indexOf(T t) {
-			//input is value being searched for, find it and return the location using a binary search
-			int y=sortedList.size();
-			int x=Math.round(y/2);
-			if(sortedList.get(x)==t) {
-		
-			}
-			else if(t instanceof Integer) {
-				Integer u=(Integer) t;	
-				if(u<x) {
-					lessThan(u,x,t);
-				}else if (u>x) {
-					moreThan(u,x,t);
-				}	
-			}
-			return x;
+	        return Arrays.binarySearch(sortedList.toArray(), t);
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -747,11 +707,16 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		//long x=given.getLong(TemporalField.LocalDateTime);
 		
-		Temporal date = given.plus(1000000000, ChronoUnit.SECONDS);
-		
-		return date;
+		Temporal date;
+		try {
+			 date=LocalDateTime.from(given);
+		}catch(Exception e) {
+			date = ((LocalDate)given).atStartOfDay();
+		}
+			
+		return date.plus(1000000000, ChronoUnit.SECONDS);
+			
 	}
 
 	/**
